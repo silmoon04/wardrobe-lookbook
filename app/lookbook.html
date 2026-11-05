@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Lookbook · Wardrobe</title>
+  <link rel="icon" href="../assets/icons/hanger.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles/tokens.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/lookbook.css">
+  <script type="module" src="lookbook.js"></script>
+<style>#new-profile,#add-garments,#agent-panel,.profile-control,#empty-import,#profile-switch{display:none!important}</style></head>
+<body>
+  <a class="skip-link" href="#lb-main">Skip to garments</a>
+  <div class="shell">
+    <header class="topbar">
+      <a class="wordmark" href="./"><span class="lb-hanger" aria-hidden="true"></span>Wardrobe<span class="wordmark-dot"></span></a>
+      <nav aria-label="Main"><a href="./">Studio</a><a href="lookbook.html" class="active" aria-current="page">Lookbook</a></nav>
+      <div class="header-actions"><label class="profile-control"><span class="sr-only">Person</span><select id="lb-profile" aria-label="Person"></select></label></div>
+    </header>
+
+    <main id="lb-main" class="lb">
+      <div class="lb-intro">
+        <div>
+          <span class="eyebrow">LOOKBOOK</span>
+          <h1 id="lb-title">Every piece</h1>
+          <p class="lb-sub" id="lb-sub">Loading the wardrobe</p>
+        </div>
+        <dl class="lb-stats" id="lb-stats"></dl>
+      </div>
+
+      <div class="lb-toolbar" role="toolbar" aria-label="Lookbook view">
+        <div class="lb-chips" id="lb-chips" role="tablist" aria-label="Category"></div>
+        <div class="lb-tools">
+          <label class="lb-search"><span class="sr-only">Search</span><input id="lb-q" type="search" placeholder="Search label or colour" autocomplete="off"></label>
+          <label class="lb-select" id="lb-side-wrap" hidden><span>View</span>
+            <select id="lb-side"><option value="front">Front</option><option value="back">Back</option></select></label>
+          <label class="lb-select"><span>Show</span>
+            <select id="lb-pair"><option value="pair">On the model, styled</option><option value="alone">On the model, alone</option><option value="product">Product only</option></select></label>
+          <label class="lb-select"><span>Status</span>
+            <select id="lb-status"><option value="">All</option><option value="PASS">Clean</option><option value="NOTE">With notes</option><option value="FAIL">Needs fix</option></select></label>
+          <label class="lb-size"><span>Size</span><input id="lb-zoom" type="range" min="150" max="320" step="10" value="210"></label>
+        </div>
+      </div>
+
+      <div id="lb-groups" aria-live="polite"></div>
+      <p class="lb-empty" id="lb-empty" hidden>No garments match this view.</p>
+    </main>
+  </div>
+
+  <dialog id="lb-detail" class="lb-detail" aria-labelledby="lb-d-title">
+    <form method="dialog" class="lb-d-close"><button class="icon-button" aria-label="Close">✕</button></form>
+    <div class="lb-d-body">
+      <div class="lb-d-stage"><div class="stage" id="lb-d-stage"></div></div>
+      <div class="lb-d-info">
+        <span class="eyebrow" id="lb-d-cat"></span>
+        <h2 id="lb-d-title"></h2>
+        <p class="lb-d-label" id="lb-d-label"></p>
+        <div class="lb-d-row"><img id="lb-d-product" alt="Product image"><div>
+          <div class="lb-d-colours" id="lb-d-colours"></div>
+          <p class="lb-d-state" id="lb-d-state"></p>
+          <div class="lb-d-toggle" role="group" aria-label="Styling">
+            <button data-pair="pair" aria-pressed="true">Styled</button><button data-pair="alone" aria-pressed="false">Alone</button>
+          </div>
+          <div class="lb-d-toggle lb-d-side" role="group" aria-label="View" hidden>
+            <button data-side="front" aria-pressed="true">Front</button><button data-side="back" aria-pressed="false">Back</button>
+          </div>
+        </div></div>
+        <h3>Notes</h3>
+        <ul id="lb-d-notes" class="lb-d-notes"></ul>
+        <div class="lb-d-nav"><button class="outlined" id="lb-prev">Previous</button><span id="lb-d-pos"></span><button class="outlined" id="lb-next">Next</button></div>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>
