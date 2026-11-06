@@ -385,6 +385,13 @@ async function loadProfile(id) {
   if (!rawSettings.background && profile.id==='person') settings.background='warm';
   if (!rawSettings.accent) settings.accent='#684557';
   settings.shadows=rawSettings.shadows!==false;
+  // One-time move to the arch stage: browsers that saved the old grey plate ('neutral') get the warm stage once.
+  const stageKey=`wardrobe:${profile.id}:stage-v2`;
+  if (profile.id==='person' && !localStorage.getItem(stageKey)) {
+    if (settings.background==='neutral') settings.background='warm';
+    if (settings.accent==='#655080') settings.accent='#684557';  // old default purple to the new plum
+    try {localStorage.setItem(stageKey,'1'); saveSettings(settings);} catch {}
+  }
   SLOT_LIST = profile.rules.slots.map(s => [s.id,s.label]);
   FILTERS = [['all','All'],...SLOT_LIST.filter(([s])=>manifest.items.some(i=>i.slot===s))];
   undo.length=0; redo.length=0; suggestionBatch=[]; beforeSuggestion=null;
