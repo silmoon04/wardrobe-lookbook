@@ -8,14 +8,21 @@ This site shows one wardrobe (52 garments, 48 can be worn now). It has no photos
 
 ## What you can do on the site
 
+| Web | Phone | Browse on the phone |
+|---|---|---|
+| ![Studio on the web](docs/img/site_front.png) | ![Studio on a phone](docs/img/site_mobile.png) | ![Browse the wardrobe](docs/img/site_mobile_browse.png) |
+
 - Choose a top, a mid layer (jumper), an outer layer (jacket), a bottom and shoes.
+- **Browse wardrobe** shows all items as pictures. You can search by name, colour or tag. You can filter by category (with counts), colour family and status, and you can sort. Tap a picture to wear it. On a phone, the list fills the screen; on the web, it opens as a panel.
 - Switch between **Front** and **Back**.
-- Tuck or untuck a shirt. Open or close a jacket.
-- Choose white low-top trainers, black Chelsea boots or brown lace-up boots. The trouser hem changes to sit on the shoe you choose.
-- Choose **Smooth** or **Natural** trousers (a smooth, pressed version or the natural folds).
-- Change the hair style.
+- In **Fit & Layer**, you can:
+  - tuck or untuck a shirt, and open or close a jacket;
+  - choose **Smooth** or **Natural** trousers (pressed, or with natural folds);
+  - choose the shoes: white low-top trainers, black Chelsea boots or brown lace-up boots. The trouser hem changes to sit on the shoe you choose;
+  - change the hair style and the **Face** shape;
+  - turn **Shadows** on or off. The shadows are soft contact shadows under collars, hems, sleeves and shirt tails, and a floor shadow under the feet. The browser computes them from the layers.
 - Press **Random outfit** for a new combination. The shuffle follows simple style rules: there is always a top and a bottom, and they contrast in lightness. A shirt is tucked only when no jumper is on. A jacket opens in most looks.
-- Open the **Lookbook** to see saved and suggested outfits.
+- **Curated looks** and the **Lookbook** show suggested and saved outfits.
 
 Garments marked *held* or *open faults* are shown but are not finished.
 
@@ -53,6 +60,20 @@ An inner layer must not show outside the layer that covers it. `tools/cover_mask
 4. it is above the collar, in the collar width (for turtlenecks and shirt collars).
 
 The tool hides everything else: shoulder edges, the gaps between arm and body, and bulges at the sides. The tool also closes zip slits, removes small loose bits, and straightens the edges of open fronts.
+
+## Change the face shape
+
+Pick **Face** on the site to switch heads. The original head stays available as F0. Hair is a separate choice.
+
+To add a shape, edit the accepted bald mannequin sheet with image generation. Keep the full 1536×1024 canvas, front left and back right, ears, pose, neck base, body and light. Change only the head and jaw. Keep it faceless. Use an outline drawing and estimated ratios as references; keep personal photos local.
+
+From `ui/app`, run:
+
+```bash
+python -X utf8 tools/make_head.py new_sheet.png F5 "My new face shape"
+```
+
+The sheet must have a transparent background and match the accepted sheet without scaling. The command cuts both heads, keeps the accepted body, and adds a soft neck seam. By default it keeps the accepted scalp and ears so the existing hair still fits. Add `--full-head` to use the generated scalp and ears too. It writes the head choices under `body/face/` in the mannequin run. Run `python -X utf8 tools/build_person.py --heads-only` to update an existing profile, or use the full build in step 6 below. For a clear change with smooth jaw edges, edit an enlarged head close-up (4×) and scale the result back down evenly. The site's "Broad jaw" heads (G1–G3) were made that way. Reload the site and pick the new **Face**. Check front and back with every hair style, a bare neck and several collars. No personal pictures belong in these docs.
 
 ## Make it for any person and any clothes
 

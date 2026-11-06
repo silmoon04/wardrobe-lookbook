@@ -29,7 +29,7 @@ function partners(manifest) {
 
 function lookFor(it, pair) {
   const shoe = data.profile.lookbookShoes;
-  const look = {selected: {[it.slot]: it.id}, shoes: shoe ? 'garment' : 'af1', background: 'neutral', tucked: {}, variants: {}, outerOpen: true};
+  const look = {selected: {[it.slot]: it.id}, shoes: shoe ? 'garment' : 'af1', background: data.profile.id==='person'?'warm':'neutral', tucked: {}, variants: {}, outerOpen: true};
   if (shoe && it.slot !== 'shoes') look.selected.shoes = shoe;
   if (pair === 'pair') {
     const p = partners(data.manifest);
@@ -58,7 +58,7 @@ function card(it, idx) {
       : view.pair === 'product' || !it.renderable
       ? `<img class="lb-product" loading="lazy" alt="" src="${esc(it.image)}">`
       : `<span class="stage lb-stage" aria-hidden="true"></span>`}
-      <span class="lb-badge lb-${st.toLowerCase()}" title="${STATUS[st]}"></span></span>
+      </span>
     <span class="lb-name">${esc(it.shortLabel || it.label)}</span>
     <span class="lb-meta">${esc((it.colours || []).join(', '))}</span>`;
   return el;
@@ -109,7 +109,7 @@ function stats() {
   $('#lb-stats').innerHTML = [['Pieces', items.length], ['Clean', n('PASS')], ['With notes', n('NOTE')], ['Needs fix', n('FAIL')]]
     .map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
   $('#lb-title').textContent = data.profile.displayName || 'Every piece';
-  $('#lb-sub').textContent = `${items.length} kept pieces on ${data.manifest.mannequin.id}. Generated layers; fit is an estimate.`;
+  $('#lb-sub').textContent = `${items.length} pieces to explore. Choose a piece for a closer look. Generated preview; fit is an estimate.`;
 }
 
 let detailPair = 'pair';
@@ -151,11 +151,24 @@ async function loadProfile(id) {
 }
 
 async function init() {
+  document.addEventListener('error',e=>{const img=e.target;if(!(img instanceof HTMLImageElement)||!img.getAttribute('src'))return;img.style.visibility='hidden';const n=Number(img.dataset.loadRetries || 0);if(n<2){img.dataset.loadRetries=String(n+1);const url=new URL(img.src);url.searchParams.set('retry',String(n+1));setTimeout(()=>{if(img.isConnected)img.src=url.href;},200*(n+1));}},true);
+  document.addEventListener('load',e=>{if(e.target instanceof HTMLImageElement)e.target.style.removeProperty('visibility');},true);
+  const metadata=document.createElement('details');metadata.className='lb-metadata';
+  metadata.innerHTML='<summary>Preview review details</summary>';
+  $('#lb-stats').before(metadata);metadata.append($('#lb-stats'));
+  const refinements=document.createElement('details');refinements.className='lb-refinements';
+  refinements.innerHTML='<summary>Filters <span aria-hidden="true">⌄</span></summary><div class="lb-extra-tools"></div>';
+  const controls=[...document.querySelectorAll('.lb-tools>.lb-select,.lb-tools>.lb-size')];
+  $('.lb-tools').append(refinements);controls.forEach(c=>refinements.querySelector('.lb-extra-tools').append(c));
+  $('#lb-q').placeholder='Search pieces or colours';
+  const arrange=()=>{metadata.open=false;refinements.open=innerWidth>700;$('#lb-main').append(metadata);};
+  arrange();window.addEventListener('resize',arrange);
   const pr = await (await fetch('api/profiles')).json();
   const sel = $('#lb-profile');
   sel.innerHTML = pr.profiles.map(p => `<option value="${esc(p.id)}">${esc(p.displayName || p.id)}</option>`).join('');
   const last = localStorage.getItem('wardrobe.lookbook.profile');
-  sel.value = pr.profiles.some(p => p.id === last) ? last : (pr.defaultProfile || pr.profiles[0]?.id);
+  const requested=new URLSearchParams(location.search).get('profile') || last || localStorage.getItem('wardrobe:last-profile');
+  sel.value = pr.profiles.some(p => p.id === requested) ? requested : (pr.defaultProfile || pr.profiles[0]?.id);
   sel.onchange = () => { localStorage.setItem('wardrobe.lookbook.profile', sel.value); loadProfile(sel.value); };
   $('#lb-chips').onclick = e => { const b = e.target.closest('[data-cat]'); if (b) { view.cat = b.dataset.cat; render(); } };
   $('#lb-q').oninput = e => { view.q = e.target.value; render(); };
@@ -175,6 +188,7 @@ async function init() {
   });
   $('#lb-detail').addEventListener('click', e => { if (e.target.id === 'lb-detail') e.target.close(); });
   await loadProfile(sel.value);
+  for(const a of document.querySelectorAll('a[href="./"],a[href="./?browse=1"]')) {const u=new URL(a.href);u.searchParams.set('profile',sel.value);a.href=u;}
   document.documentElement.dataset.ready = 'true';
 }
 

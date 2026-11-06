@@ -43,6 +43,40 @@ def save(im, dest, mask=False):
     return rel(dest)
 
 
+def add_heads(m, name, d):
+    face = RUN/'body/face'
+    if not (face/'heads.json').is_file():
+        return
+    heads = json.loads((face/'heads.json').read_text(encoding='utf8'))
+    m['headOptions'] = {}
+    for hid, info in sorted(heads['options'].items(), key=lambda pair: (pair[0][0], int(pair[0][1:]))):
+        if info.get('selectable') is False:
+            continue
+        parts = info['views'][name]
+        m['headOptions'][hid] = {'label': info['label'], **{
+            part: save(Image.open(face/parts[part]), d/f'{part}_{hid}.webp', mask=True)
+            for part in ['head', 'body']}}
+    m['defaultHead'] = heads['defaultHead']
+    if m['defaultHead'] not in m['headOptions']:
+        raise ValueError('defaultHead must name an extracted head option')
+
+
+def rebuild_heads():
+    """Refresh only swappable heads after the initial complete profile build."""
+    profile = json.loads((OUT/'profile.json').read_text(encoding='utf8'))
+    wardrobe = json.loads((OUT/'wardrobe.json').read_text(encoding='utf8'))
+    for name in ['front', 'back']:
+        man = profile['mannequin'] if name == 'front' else profile['views'][name]['mannequin']
+        add_heads(man, name, DATA/'mannequin'/name)
+    wardrobe['mannequin'] = profile['mannequin']
+    for path, data in [(OUT/'profile.json', profile), (OUT/'wardrobe.json', wardrobe)]:
+        path.write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding='utf8')
+    sys.path.insert(0, str(APP))
+    import profile_core
+    profile_core.load_profile(PID)
+    print('Heads rebuilt:', ', '.join(profile['mannequin']['headOptions']), 'default', profile['mannequin']['defaultHead'])
+
+
 class View:
     """A camera view: crop window inside the view canvas (x0) and inside the 1536 sheet (sx0)."""
     def __init__(self, name, sheet_box, body_alpha):
@@ -62,6 +96,9 @@ class View:
 
 
 def main():
+    if sys.argv[1:] == ['--heads-only']:
+        rebuild_heads()
+        return
     ap = argparse.ArgumentParser()
     ap.add_argument('--body', choices=['pilot', 'b2'], required=True)
     ap.add_argument('--name', default='Video person')
@@ -109,6 +146,7 @@ def main():
                            'hair_back': save(v.crop_sheet(Image.open(b2/info['behind_layer'])), d/f'hair_back_{h}.webp')}
             m['hairOptions'] = opts
             m['defaultHair'] = 'H1'
+            add_heads(m, name, d)
         m['over'] = save(over, d/'over.webp')
         lm = dict(marks, canvas=[W, 1024], view=name, crop_x0_in_view=v.x0, crop_x0_in_sheet=v.sx0)
         (d/'landmarks.json').write_text(json.dumps(lm, indent=1), encoding='utf8')

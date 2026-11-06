@@ -1,19 +1,21 @@
-let DEFAULTS = {};
+import {setShadowsEnabled} from './shadows.js';
+let DEFAULTS = {shadows:true};
 const OPTIONS = {theme:['light','warm','dark'],density:['comfortable','compact'],background:['neutral','studio','warm','check'],size:['small','medium','large'],browse:['rail','grid'],shoes:['none','af1','garment'],labels:['short','full']};
 let KEY;
 export function loadSettings(profile, defaults) {
   KEY = `wardrobe:${profile}:settings`;
-  DEFAULTS = {...defaults};
+  DEFAULTS = {shadows:true,...defaults};
   let raw;
   try {raw = JSON.parse(localStorage.getItem(KEY)||'{}');} catch {raw={};}
   const result = {...DEFAULTS};
   if (!raw || typeof raw !== 'object') return result;
   for (const [key,values] of Object.entries(OPTIONS)) if (values.includes(raw[key])) result[key] = raw[key];
   if (/^#[0-9a-f]{6}$/i.test(raw.accent)) result.accent = raw.accent;
-  for (const key of ['slots','agent','details','saved']) if (typeof raw[key] === 'boolean') result[key] = raw[key];
+  for (const key of ['slots','agent','details','saved','shadows']) if (typeof raw[key] === 'boolean') result[key] = raw[key];
   return result;
 }
 export function applySettings(settings) {
+  setShadowsEnabled(settings.shadows);
   for (const key of ['theme','density','background','size','labels']) document.documentElement.dataset[key] = settings[key];
   if (!settings.accent) return;
   document.documentElement.style.setProperty('--accent',settings.accent);

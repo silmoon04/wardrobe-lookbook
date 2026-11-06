@@ -1,6 +1,7 @@
 // Registered independent layers on one fixed canvas; no full-outfit image swaps.
 // A view (front/back camera) swaps the canvas, mannequin and per-item variants. Items
 // without layers for that view render nothing there, never the other view's pixels.
+import {attachShadows} from './shadows.js';
 export function viewManifest(manifest, view) {
   const v = manifest.views?.[view];
   if (!v) return manifest;
@@ -48,8 +49,12 @@ export function resolveLayers(manifest, look) {
   });
   // body_keep (alpha = keep) hides mannequin pixels that a garment's own render shows as covered or empty,
   // for example the arm strip between a generated sleeve and the torso.
-  result.push({src:manifest.mannequin.body,kind:'body',key:'body',role:'body',
-               masks:equipped.map(l => l.asset.body_keep).filter(Boolean)});
+  // Face shape: a swappable head layer. headOptions[id] = {label, head, body?}; body is the matching headless body.
+  const headId = look.head || manifest.mannequin.defaultHead;
+  const head = manifest.mannequin.headOptions?.[headId] || null;
+  const bodyMasks = equipped.map(l => l.asset.body_keep).filter(Boolean);
+  result.push({src:head?.body || manifest.mannequin.body,kind:'body',key:'body',role:'body',masks:bodyMasks});
+  if (head?.head) result.push({src:head.head,kind:'head',key:`head:${headId}`,role:'head',masks:bodyMasks});
   let footwearAdded=false;
   const addFootwear=()=>{
     if (!footwearAdded && look.shoes === 'af1' && manifest.mannequin.af1) {
@@ -83,21 +88,36 @@ export function resolveLayers(manifest, look) {
   return result.filter(l => l.src);
 }
 
+// Reuse decoded images when switching views / revisiting looks. This also avoids
+// revalidating every unchanged body and garment asset on the local no-cache server.
+const imagePools = new WeakMap();
 export function renderLook(target,manifest,look) {
   target.style.aspectRatio=`${manifest.canvas.width} / ${manifest.canvas.height}`;
   const layers = resolveLayers(manifest,look);
   const fragment = document.createDocumentFragment();
+  const nodes = [];
+  const pool = imagePools.get(target) || new Map();
+  imagePools.set(target,pool);
   for (const l of layers) {
-    const img = document.createElement('img');
-    img.className = `layer ${l.kind}`; img.src = l.src; img.alt = ''; img.draggable = false;
+    const imageKey = `${l.key}|${l.src}`;
+    const img = pool.get(imageKey) || document.createElement('img');
+    pool.delete(imageKey); pool.set(imageKey,img);
+    img.className = `layer ${l.kind}`;
+    if (img.getAttribute('src') !== l.src) img.src = l.src;
+    img.alt = ''; img.draggable = false;
     img.dataset.layer = l.key; img.dataset.role = l.role;
     img.width = manifest.canvas.width; img.height = manifest.canvas.height;
     if (l.masks?.length) {
       img.style.maskImage = l.masks.map(p => `url("${p}")`).join(',');
       img.style.maskComposite = 'intersect';
+    } else {
+      img.style.removeProperty('mask-image'); img.style.removeProperty('mask-composite');
     }
     fragment.append(img);
+    nodes.push(img);
   }
   target.replaceChildren(fragment);
   target.dataset.stack = layers.map(l => l.key).join('|');
+  while (pool.size > 96) pool.delete(pool.keys().next().value);
+  attachShadows(target,layers,nodes,manifest.canvas,manifest.items);
 }
