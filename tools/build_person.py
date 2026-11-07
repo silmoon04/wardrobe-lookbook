@@ -104,6 +104,8 @@ def main():
     ap.add_argument('--name', default='Video person')
     ap.add_argument('--shoes', help='shoes.json from the shoes lane')
     ap.add_argument('--show-open', action='store_true', help='render items that have layers even when a lane held them for open faults')
+    ap.add_argument('--no-cover', action='store_true', help='skip silhouette cover masks')
+    ap.add_argument('--no-edge-clean', action='store_true', help='skip garment edge colour decontamination')
     ap.add_argument('--plate', help='mannequin folder with <view>/bg.png (empty studio plate) and <view>/over.png')
     ap.add_argument('parts', nargs='+')
     a = ap.parse_args()
@@ -250,9 +252,12 @@ def main():
         if not (OUT/f).exists(): (OUT/f).write_text(empty, encoding='utf8')
     sys.path.insert(0, str(APP))
     sys.path.insert(0, str(APP/'tools'))
-    if '--no-cover' not in sys.argv:
+    if not a.no_cover:
         import cover_masks  # silhouette cover rule, slit/edge clean-up, shoe_keep
         cover_masks.main(str(OUT))
+    if not a.no_edge_clean:
+        import edge_clean
+        edge_clean.main(OUT)
     import profile_core
     loaded = profile_core.load_profile(PID)
     print('items', len(items), 'front renderable', sum(i['renderable'] for i in items),

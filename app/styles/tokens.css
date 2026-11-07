@@ -1,12 +1,11 @@
-@font-face{font-family:Manrope;src:url('../../assets/fonts/Manrope-Variable.ttf') format('truetype');font-weight:200 800;font-display:swap}
-@font-face{font-family:'Instrument Serif';src:url('../../assets/fonts/InstrumentSerif-Regular.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:Onest;src:url('../../assets/fonts/Onest-Latin.woff2') format('woff2');font-weight:100 900;font-display:swap}
 :root,[data-theme=light]{
   color-scheme:light;
   --paper:#f6f5f2;--panel:#ffffff;--soft:#eeece8;--ink:#292830;--muted:#696570;--line:#d8d4dc;
   --accent:#655080;--accent-ink:var(--accent);--on-accent:#fff;--hover:#e8e3ed;--error:#9b323e;--stage:#e5e3df;--stage-neutral:#c7c4ca;--stage-grey:#adadae;--stage-warm:#ded0be;
   --rail-surface:var(--soft);--rail-ink:var(--muted);
   --product:#f0eeeb;--check-one:#e5e3e0;--check-two:#fff;--backdrop:#17131c66;
-  --serif:'Instrument Serif',Georgia,serif;--sans:Manrope,'Segoe UI',sans-serif;
+  --serif:Onest,'Segoe UI',sans-serif;--sans:Onest,'Segoe UI',sans-serif;
   --text-xs:12px;--text-sm:12px;--text-base:14px;--text-lg:18px;--text-title:32px;--text-display:44px;
   --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;
   --radius:6px;--radius-panel:12px;--shadow:0 12px 38px #27212f12;--focus:3px;

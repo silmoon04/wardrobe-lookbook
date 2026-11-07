@@ -1,92 +1,613 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#f5f3ed">
-  <title>Wardrobe</title>
-  <link rel="icon" href="../assets/icons/hanger.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles/tokens.css">
-  <link rel="stylesheet" href="styles/components.css">
-  <link rel="stylesheet" href="styles/studio.css">
-  <script type="module" src="app.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#faf9fc">
+<title>Wardrobe</title>
+<link rel="icon" href="../assets/icons/hanger.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="preload" as="font" href="../assets/fonts/Onest-Latin.woff2" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/workspace.css">
+<script type="module" src="app.js">
+</script>
 <script>window.wardrobeStatic=true</script><style>#new-profile,#add-garments,#agent-panel,.profile-control,#empty-import,#profile-switch{display:none!important}</style></head>
-<body>
-  <a class="skip-link" href="#main">Skip to studio</a>
-  <div class="shell">
-    <header class="topbar">
-      <a class="wordmark" href="./">Wardrobe<small>VIRTUAL TRY-ON</small></a>
-      <nav aria-label="Main"><a href="#main" class="active" aria-current="page">Try on</a><button id="nav-browse">My wardrobe</button><a href="lookbook.html">Looks</a><a href="#saved-section">Saved <span id="nav-saved-count">0</span></a></nav>
-      <div class="header-actions"><label class="profile-control"><span class="sr-only">Person</span><select id="profile-switch" aria-label="Person"></select></label><button class="text-button" id="new-profile">New profile</button><button class="outlined" id="customize" aria-haspopup="dialog">Customize</button><button class="primary" id="save-look"><span data-icon="save"></span>Save look</button></div>
-    </header>
-
-    <main id="main" class="workspace">
-      <section class="studio" aria-labelledby="studio-heading">
-        <div class="section-heading studio-heading">
-          <div><span class="eyebrow">01 / LOOK</span><h1 id="studio-heading">Studio</h1></div>
-          <div class="compare-actions"><button id="pin-look" class="text-button"><span data-icon="pin"></span><span id="pin-label">Pin look</span></button><button id="compare" class="outlined" aria-pressed="false" disabled><span data-icon="compare"></span>Compare</button></div>
-        </div>
-        <div class="studio-body">
-          <aside class="slot-rail" aria-label="Outfit slots" id="slots"></aside>
-          <div class="stage-panel">
-            <div class="stage-heading"><span id="stage-title">Current look</span><span id="layer-count">0 garments</span></div>
-            <div class="stages" id="stages">
-              <figure class="look-frame pinned-frame" hidden><figcaption>Pinned look</figcaption><div id="pinned-stage" class="stage" aria-label="Pinned outfit"></div></figure>
-              <figure class="look-frame current-frame"><figcaption>Current look</figcaption><div id="current-stage" class="stage" aria-label="Current outfit"></div></figure>
-            </div>
-            <div class="stage-controls">
-              <div class="view-controls" role="group" aria-label="View">
-                <button class="active" aria-pressed="true" data-view="front"><span data-icon="view-front"></span>Front</button>
-                <button aria-pressed="false" data-view="back" hidden><span data-icon="view-front"></span>Back</button>
-              </div>
-              <div class="history-controls"><button id="undo" class="icon-button" aria-label="Undo" title="Undo (Ctrl+Z)" disabled><span data-icon="undo"></span></button><button id="redo" class="icon-button" aria-label="Redo" title="Redo (Ctrl+Y)" disabled><span data-icon="redo"></span></button></div>
-            </div>
-          </div>
-        </div>
-        <p class="stage-note" id="view-note" role="status" hidden></p>
-        <p class="stage-note" id="stage-note"></p>
-        <div class="outfit-controls"><div id="variants" class="variant-controls"></div><label class="shoe-control" id="hair-control" hidden>Hair<select id="mannequin-hair" aria-label="Mannequin hair"></select></label><label class="shoe-control" id="finish-control" hidden>Bottoms<select id="bottom-finish" aria-label="Bottom finish"><option value="default">Natural</option><option value="smooth">Smooth</option></select></label><label class="shoe-control">Shoes<select id="mannequin-shoes" aria-label="Mannequin shoes"><option value="none">None</option><option value="af1">White AF1</option><option value="garment">Garment footwear</option></select></label><button id="randomise" class="text-button"><span data-icon="randomise"></span>Random outfit</button></div>
-        <details class="agent-panel" id="agent-panel" aria-labelledby="agent-heading" open>
-          <summary class="agent-heading"><h2 id="agent-heading">Outfit assistant</h2><span class="agent-hint">New combinations from your kept pieces</span></summary>
-          <form id="agent-form"><label for="agent-prompt">Occasion, weather or mood <span class="optional">(optional)</span></label><textarea id="agent-prompt" rows="2" maxlength="2000"></textarea><div class="agent-form-bottom"><label class="check-label"><input type="checkbox" id="use-piece">Use the piece in view</label><button class="primary" id="suggest" type="submit">Suggest an outfit<span data-icon="right"></span></button></div></form>
-          <p class="agent-status" id="agent-status" role="status" aria-live="polite">New combinations from your kept wardrobe.</p>
-          <div id="suggestion" hidden><p id="suggestion-reason"></p><p id="suggestion-pieces"></p><div class="suggestion-actions"><button id="accept-suggestion" class="primary">Accept &amp; save</button><button id="next-suggestion" class="outlined">Next</button><button id="close-suggestion" class="text-button">Back to my look</button><span id="suggestion-index"></span></div></div>
-        </details>
-      </section>
-
-      <section class="browser" aria-labelledby="wardrobe-heading" id="browse-panel" hidden>
-        <div class="section-heading"><div><span class="eyebrow">02 / CLOTHES</span><h2 id="wardrobe-heading">Wardrobe <span id="total-count"></span></h2></div><div class="mode-controls" role="group" aria-label="Browse mode"><button class="text-button" id="add-garments">Add garments</button><button class="icon-button active" id="rail-mode" aria-label="Clothes rail" aria-pressed="true" title="Clothes rail"><span data-icon="rail"></span></button><button class="icon-button" id="grid-mode" aria-label="Garment grid" aria-pressed="false" title="Garment grid"><span data-icon="grid"></span></button></div></div>
-        <div id="slot-filters" class="slot-filters" role="group" aria-label="Filter by slot"></div>
-        <div class="browser-tools"><label class="search"><span data-icon="search"></span><span class="sr-only">Search clothes</span><input type="search" id="search" aria-label="Search clothes"></label><button id="filter-toggle" class="icon-button" aria-label="Category filters" title="Category filters" aria-expanded="false" aria-controls="category-panel"><span data-icon="filter"></span></button><label class="sort-control"><span data-icon="sort"></span><select id="sort" aria-label="Sort garments"><option value="default">Wardrobe order</option><option value="az">Name: A–Z</option><option value="za">Name: Z–A</option><option value="category">Category</option><option value="colour">Colour</option></select></label></div>
-        <div id="category-panel" class="category-panel" hidden><label>Category<select id="category"><option value="all">All categories</option></select></label><button class="text-button" id="reset-filters">Reset filters</button></div>
-        <div class="palette-row"><span class="small-label"><span data-icon="swatch"></span>Colour</span><div class="swatches" id="swatches" role="group" aria-label="Filter by colour"></div><button id="colour-next" class="icon-button colour-next" aria-label="More colours" title="More colours"><span data-icon="right"></span></button><span id="result-count" class="result-count"></span></div>
-        <div class="garment-browser" id="garment-browser">
-          <div class="rail-scene" id="rail-scene" tabindex="0" aria-label="Clothes rail. Use the left and right arrow keys."><div class="rail-bar"></div><div class="rail-floor"></div><div id="rail-items" class="rail-items"></div></div>
-          <div id="garment-grid" class="garment-grid" hidden></div>
-          <div class="empty-state" id="empty-state" hidden><span data-icon="hanger"></span><p id="empty-label">No garments found</p><button class="outlined" id="clear-empty">Reset filters</button><button class="primary" id="empty-import">Add garments</button></div>
-        </div>
-        <div class="rail-navigation" id="rail-navigation"><button class="icon-button" id="previous" aria-label="Previous garment"><span data-icon="left"></span></button><div class="rail-caption"><span id="rail-category" class="eyebrow"></span><h3 id="rail-name"></h3><span id="rail-index"></span></div><button class="icon-button" id="next" aria-label="Next garment"><span data-icon="right"></span></button></div>
-        <div class="browser-bottom"><span id="active-filter-label">All clothes</span><button class="primary" id="wear-item">Wear garment<span data-icon="right"></span></button></div>
-        <section id="piece-detail" class="piece-detail" aria-labelledby="piece-heading"><div class="piece-heading"><h3 id="piece-heading">Garment details</h3><span id="piece-render-state"></span></div><p id="piece-label"></p><p id="piece-status"></p><details id="piece-notes"><summary>Notes &amp; version</summary><p id="piece-version"></p><ul id="piece-note-list"></ul></details></section>
-        <p id="data-summary" class="data-summary"></p>
-      </section>
-    </main>
-
-    <section class="curated-section" aria-labelledby="curated-heading"><div class="curated-heading"><div><span class="eyebrow">A LITTLE INSPIRATION</span><h2 id="curated-heading">Curated looks</h2></div><a id="all-looks" href="lookbook.html">Explore lookbook <span aria-hidden="true">↗</span></a></div><div id="curated-list" class="curated-list"></div></section>
-    <section class="saved-section" id="saved-section" aria-labelledby="saved-heading"><div class="saved-heading"><span class="eyebrow">YOUR COLLECTION</span><h2 id="saved-heading">Saved looks <span id="saved-count">0</span></h2></div><div class="saved-list" id="saved-list"><p class="saved-empty">Save an outfit to come back to it.</p></div></section>
-  </div>
-  <dialog id="settings-dialog" aria-labelledby="settings-heading"><div class="dialog-heading"><div><span class="eyebrow">YOUR WORKSPACE</span><h2 id="settings-heading">Customize</h2></div><button class="icon-button" id="close-settings" aria-label="Close customization">×</button></div>
-    <div class="settings-grid">
-      <fieldset><legend>Appearance</legend><label>Theme<select data-setting="theme"><option value="light">Light</option><option value="warm">Warm</option><option value="dark">Dark</option></select></label><label>Accent colour<input type="color" data-setting="accent" value="#655080"></label><label>Layout density<select data-setting="density"><option value="comfortable">Comfortable</option><option value="compact">Compact</option></select></label><label>Garment labels<select data-setting="labels"><option value="short">Short</option><option value="full">Full catalogue labels</option></select></label></fieldset>
-      <fieldset><legend>Stage &amp; wardrobe</legend><label>Stage background<select data-setting="background"><option value="neutral">Neutral</option><option value="studio">Studio grey</option><option value="warm">Warm</option><option value="check">Transparent check</option></select></label><label>Stage size<select data-setting="size"><option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option></select></label><label>Browse clothes<select data-setting="browse"><option value="rail">Clothes rail</option><option value="grid">Product grid</option></select></label><label>Mannequin shoes<select data-setting="shoes"><option value="none">None</option><option value="af1">White AF1</option><option value="garment">Garment footwear</option></select></label></fieldset>
-      <fieldset class="panel-settings"><legend>Visible panels</legend><label class="check-label"><input type="checkbox" data-setting="slots">Outfit slots</label><label class="check-label"><input type="checkbox" data-setting="agent">Outfit assistant</label><label class="check-label"><input type="checkbox" data-setting="details">Garment details</label><label class="check-label"><input type="checkbox" data-setting="saved">Saved looks</label></fieldset>
-    </div><div class="dialog-actions"><button class="outlined" id="reset-settings">Reset settings</button><button class="primary" id="done-settings">Done</button></div>
-  </dialog>
-  <dialog id="profile-dialog" aria-labelledby="profile-heading"><form id="profile-form"><div class="dialog-heading"><h2 id="profile-heading">New profile</h2><button type="button" class="icon-button" data-close="profile-dialog" aria-label="Close new profile">×</button></div><p class="form-help">Add a person with their own mannequin, wardrobe and saved looks. All files stay on this computer.</p><label>Name<input id="profile-name" required maxlength="80" autocomplete="off"></label><label>Local mannequin folder<input id="profile-folder" autocomplete="off" aria-describedby="model-files"></label><p id="model-files" class="form-help">Folder files: base.png, body.png, over.png, hair_back.png, bg.png and landmarks.json. Cut layers must have transparency.</p><label>Or upload a mannequin folder<input id="profile-upload" type="file" webkitdirectory multiple></label><details><summary>Optional measurements</summary><div class="measurement-fields"><label>Bust (cm)<input type="number" id="measure-bust" min="1" max="400" step="0.1"></label><label>Waist (cm)<input type="number" id="measure-waist" min="1" max="400" step="0.1"></label><label>Hip (cm)<input type="number" id="measure-hip" min="1" max="400" step="0.1"></label></div></details><p id="profile-error" role="alert" class="form-error"></p><div class="dialog-actions"><button type="button" class="outlined" data-close="profile-dialog">Cancel</button><button type="submit" class="primary" id="create-profile">Create profile</button></div></form></dialog>
-  <dialog id="import-dialog" aria-labelledby="import-heading"><form id="import-form"><div class="dialog-heading"><h2 id="import-heading">Add garments</h2><button type="button" class="icon-button" data-close="import-dialog" aria-label="Close garment import">×</button></div><p class="form-help">Import a folder with manifest.json and its layer PNGs. Product images alone become product-only cards until layers are added. Use layers made for this mannequin and canvas.</p><label>Local garment folder<input id="import-folder" autocomplete="off"></label><label>Or upload a garment folder<input id="import-upload" type="file" webkitdirectory multiple></label><p class="form-help">For the manifest format, see “Add a person” in the app README.</p><p id="import-error" class="form-error" role="alert"></p><div class="dialog-actions"><button class="outlined" type="button" data-close="import-dialog">Cancel</button><button class="primary" id="import-submit">Import garments</button></div></form></dialog>
-  <dialog id="save-dialog" aria-labelledby="save-heading"><form id="save-form"><div class="dialog-heading"><h2 id="save-heading">Save look</h2><button type="button" id="close-save" class="icon-button" aria-label="Close"><span data-icon="close"></span></button></div><label for="look-name">Look name</label><input id="look-name" name="name" maxlength="60" required autocomplete="off"><p id="save-error" role="alert" class="form-error"></p><div class="dialog-actions"><button type="button" id="cancel-save" class="outlined">Cancel</button><button type="submit" class="primary">Save</button></div></form></dialog>
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <div id="load-error" class="load-error" hidden role="alert"><h2>Profile could not load</h2><p>Check the profile files, or select another person in the top bar.</p><pre id="error-detail"></pre><button class="outlined" id="retry-profile">Retry</button></div>
+<body class="studio-app">
+<a class="skip-link" href="#main">Skip to studio</a>
+<div class="shell">
+<header class="topbar">
+<button id="menu-toggle" class="icon-button" data-action="menu" aria-label="Wardrobe menu" title="Looks, Compare and more" aria-expanded="false" aria-controls="workspace-menu">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#hanger">
+</use>
+</svg>
+</button>
+<div id="workspace-menu" class="workspace-menu" hidden="">
+<button data-action="looks">Looks</button>
+<a href="lookbook.html">Lookbook</a>
+<details class="legacy-options">
+<summary>Local tools</summary>
+<label class="profile-control">
+<span class="sr-only">Person</span>
+<select id="profile-switch" aria-label="Person">
+</select>
+</label>
+<button class="text-button" id="new-profile">New profile</button>
+<button id="nav-browse">My wardrobe</button>
+<button id="open-agent">Outfit suggestions</button>
+<button id="save-as" data-action="save-as">Save as…</button>
+</details>
+<button class="icon-button" id="customize" aria-haspopup="dialog" data-action="settings" aria-label="Settings" title="Settings"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M8 4v6M16 14v6"/></svg></button>
+</div>
+<div class="top-views">
+<div class="view-controls" role="group" aria-label="View">
+<button class="active" aria-pressed="true" data-action="view" data-view="front">
+<span data-icon="view-front">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/slots.svg#view-front">
+</use>
+</svg>
+</span>Front</button>
+<button aria-pressed="false" data-action="view" data-view="back" hidden="">
+<span data-icon="view-front">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/slots.svg#view-front">
+</use>
+</svg>
+</span>Back</button>
+</div>
+<div class="history-controls">
+<button id="undo" data-action="undo" class="icon-button" aria-label="Undo" title="Undo (Ctrl+Z)" disabled="">
+<span data-icon="undo">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#undo">
+</use>
+</svg>
+</span>
+</button>
+<button id="redo" data-action="redo" class="icon-button" aria-label="Redo" title="Redo (Ctrl+Y)" disabled="">
+<span data-icon="redo">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#redo">
+</use>
+</svg>
+</span>
+</button>
+</div>
+</div>
+<div class="header-actions">
+<button id="header-search" class="icon-button" data-action="search" aria-label="Search all clothes">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#search">
+</use>
+</svg>
+</button>
+<button id="randomise" class="icon-button" aria-label="Random outfit" data-action="randomise">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#randomise">
+</use>
+</svg>
+</button>
+<button class="primary" id="save-look" data-action="save" aria-label="Save look" aria-live="polite">Save</button>
+<button id="pin-look" class="icon-button" aria-label="Pin current look" data-action="pin-look">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#pin">
+</use>
+</svg>
+<span id="pin-label" class="sr-only">Pin look</span>
+</button>
+<button id="compare" class="icon-button" aria-pressed="false" disabled="" aria-label="Compare looks" data-action="compare">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#compare">
+</use>
+</svg>
+</button>
+</div>
+</header>
+<main id="main" class="workspace">
+<aside class="slot-rail" aria-label="Outfit slots" id="slots">
+</aside>
+<div id="phone-settings" class="phone-settings"></div>
+<section class="browser" aria-labelledby="wardrobe-heading" id="browse-panel" tabindex="-1">
+<div class="section-heading">
+<h2 id="wardrobe-heading">Clothes</h2>
+<div id="category-options"></div>
+<button id="close-browse" class="icon-button" data-action="close-library" aria-label="Close clothes">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#close">
+</use>
+</svg>
+</button>
+</div>
+<div id="slot-filters" class="slot-filters" role="group" aria-label="Filter by slot">
+</div>
+<div class="browser-tools">
+<label class="search">
+<span data-icon="search">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#search">
+</use>
+</svg>
+</span>
+<span class="sr-only">Search clothes</span>
+<input type="search" id="search" aria-label="Search clothes" placeholder="Search all clothes" data-action="search-input" autocomplete="off">
+</label>
+<button id="filter-toggle" class="icon-button" aria-label="Category filters" title="Category filters" aria-expanded="false" aria-controls="category-panel">
+<span data-icon="filter">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#filter">
+</use>
+</svg>
+</span>
+</button>
+</div>
+<div id="category-panel" class="category-panel" hidden="">
+<label>Category<select id="category">
+<option value="all">All categories</option>
+</select>
+</label>
+<button class="text-button" id="reset-filters">Reset filters</button>
+<div class="mode-controls">
+<button id="rail-mode" aria-label="Clothes rail">Rail</button>
+<button id="grid-mode" aria-label="Garment grid">Grid</button>
+<button id="add-garments">Import garments</button>
+</div>
+<label class="sort-control">
+<span data-icon="sort">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#sort">
+</use>
+</svg>
+</span>
+<select id="sort" aria-label="Sort garments">
+<option value="default">Wardrobe order</option>
+<option value="az">Name: A–Z</option>
+<option value="za">Name: Z–A</option>
+<option value="category">Category</option>
+<option value="colour">Colour</option>
+</select>
+</label>
+<div class="palette-row">
+<span class="small-label">
+<span data-icon="swatch">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#swatch">
+</use>
+</svg>
+</span>Colour</span>
+<div class="swatches" id="swatches" role="group" aria-label="Filter by colour">
+</div>
+<button id="colour-next" class="icon-button colour-next" aria-label="More colours" title="More colours">
+<span data-icon="right">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#right">
+</use>
+</svg>
+</span>
+</button>
+<span id="result-count" class="result-count">
+</span>
+</div>
+<div id="status-filters" role="group" aria-label="Filter by status">
+<button data-status="all" aria-pressed="true">Any status</button>
+<button data-status="ready" aria-pressed="false">Preview ready</button>
+<button data-status="held" aria-pressed="false">Held</button>
+<button data-status="faults" aria-pressed="false">Open faults</button>
+<button data-status="product" aria-pressed="false">Product only</button>
+</div>
+</div>
+<div class="garment-browser" id="garment-browser">
+<div class="rail-scene" id="rail-scene" tabindex="0" aria-label="Clothes rail. Use the left and right arrow keys.">
+<div class="rail-bar">
+</div>
+<div class="rail-floor">
+</div>
+<div id="rail-items" class="rail-items">
+</div>
+</div>
+<div id="garment-grid" class="garment-grid" hidden="">
+</div>
+<div class="empty-state" id="empty-state" hidden="">
+<span data-icon="hanger">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#hanger">
+</use>
+</svg>
+</span>
+<p id="empty-label">No garments found</p>
+<button class="outlined" id="clear-empty">Reset filters</button>
+<button class="primary" id="empty-import">Add garments</button>
+</div>
+</div>
+<div class="rail-navigation" id="rail-navigation">
+<button class="icon-button" id="previous" aria-label="Previous garment">
+<span data-icon="left">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#left">
+</use>
+</svg>
+</span>
+</button>
+<div class="rail-caption">
+<span id="rail-category" class="eyebrow">
+</span>
+<h3 id="rail-name">
+</h3>
+<span id="rail-index">
+</span>
+</div>
+<button class="icon-button" id="next" aria-label="Next garment">
+<span data-icon="right">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#right">
+</use>
+</svg>
+</span>
+</button>
+</div>
+<div class="browser-bottom">
+<span id="active-filter-label">All clothes</span>
+<button class="primary" id="wear-item">Wear garment<span data-icon="right">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#right">
+</use>
+</svg>
+</span>
+</button>
+</div>
+<section id="piece-detail" class="piece-detail" aria-labelledby="piece-heading">
+<div class="piece-heading">
+<h3 id="piece-heading">Garment details</h3>
+<span id="piece-render-state">
+</span>
+</div>
+<p id="piece-label">
+</p>
+<p id="piece-status">
+</p>
+<details id="piece-notes">
+<summary>Notes &amp; version</summary>
+<p id="piece-version">
+</p>
+<ul id="piece-note-list">
+</ul>
+</details>
+</section>
+<p id="data-summary" class="data-summary">
+</p>
+</section>
+<section class="studio" aria-label="Studio">
+<div class="studio-body">
+<div class="stage-panel">
+<div class="stages" id="stages">
+<figure class="look-frame pinned-frame" hidden="">
+<figcaption>Pinned look</figcaption>
+<div id="pinned-stage" class="stage" role="img" aria-label="Pinned outfit">
+</div>
+</figure>
+<figure class="look-frame current-frame">
+<figcaption>Current look</figcaption>
+<div id="current-stage" class="stage" role="img" aria-label="Current outfit">
+</div>
+</figure>
+</div>
+<div class="stage-controls">
+</div>
+<div class="stage-quick-actions">
+<button id="open-looks" class="icon-button" data-action="looks" aria-label="Looks" title="Looks"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Looks</span></button>
+</div>
+<button id="stage-previous" class="step-button" data-action="previous-item" aria-label="Previous item">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#left">
+</use>
+</svg>
+</button>
+<button id="stage-next" class="step-button" data-action="next-item" aria-label="Next item">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#right">
+</use>
+</svg>
+</button>
+<button id="show-layers" class="icon-button" data-action="layers" aria-label="Worn layers">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<path d="m3 7 9-4 9 4-9 4-9-4Zm0 5 9 4 9-4M3 17l9 4 9-4">
+</path>
+</svg>
+</button>
+</div>
+</div>
+<p class="stage-note" id="view-note" role="status" hidden="">
+</p>
+<p class="stage-note" id="stage-note" hidden="">
+</p>
+<div class="outfit-controls" hidden="">
+<div id="variants" class="variant-controls">
+</div>
+<label class="check-label" id="finish-control" hidden="">Smooth
+<input id="bottom-finish" data-action="finish" type="checkbox" role="switch" aria-label="Smooth trousers">
+</label>
+</div>
+</section>
+<aside class="layers-panel" aria-label="Worn layers">
+<div class="layers-heading">
+<h2>Layers</h2>
+<button id="close-layers" class="icon-button" aria-label="Close layers">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#close">
+</use>
+</svg>
+</button>
+</div>
+<div id="worn-rail">
+</div>
+</aside>
+</main>
+</div>
+<dialog id="settings-dialog" aria-labelledby="settings-heading">
+<div class="dialog-heading">
+<div>
+<h2 id="settings-heading">Settings</h2>
+</div>
+<button class="icon-button" id="close-settings" aria-label="Close settings">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#close">
+</use>
+</svg>
+</button>
+</div>
+<div class="settings-grid">
+<fieldset class="global-settings">
+<legend class="sr-only">Settings</legend>
+<div class="appearance-control" id="hair-control" hidden=""><span>Hair</span><div id="hair-chips" class="appearance-chips" role="group" aria-label="Hair"></div><select id="mannequin-hair" data-action="hair" aria-label="Mannequin hair" hidden>
+</select>
+</div>
+<div class="appearance-control" id="head-control" hidden=""><span>Face</span><div id="face-chips" class="appearance-chips" role="group" aria-label="Face"></div><select id="mannequin-head" data-action="face" aria-label="Mannequin face" hidden>
+</select>
+</div>
+<label>Shadows<input id="shadow-toggle" data-action="shadows" type="checkbox" role="switch" aria-label="Shadows" checked="">
+</label>
+<div class="theme-control"><span>Theme</span><div class="segmented" role="group" aria-label="Theme"><button data-action="set-theme" data-theme-value="light">Light</button><button data-action="set-theme" data-theme-value="dark">Dark</button></div><select data-action="theme" data-setting="theme" hidden>
+<option value="light">Light</option>
+<option value="warm">Warm</option>
+<option value="dark">Dark</option>
+</select>
+</div>
+</fieldset>
+<details class="legacy-options">
+<summary>Advanced</summary>
+<fieldset>
+<legend>Appearance</legend>
+<label>Accent colour<input type="color" data-setting="accent" value="#655080">
+</label>
+<label>Layout density<select data-setting="density">
+<option value="comfortable">Comfortable</option>
+<option value="compact">Compact</option>
+</select>
+</label>
+<label>Garment labels<select data-setting="labels">
+<option value="short">Short</option>
+<option value="full">Full catalogue labels</option>
+</select>
+</label>
+</fieldset>
+<fieldset>
+<legend>Stage &amp; wardrobe</legend>
+<label>Stage background<select data-setting="background">
+<option value="neutral">Neutral</option>
+<option value="studio">Studio grey</option>
+<option value="warm">Warm</option>
+<option value="check">Transparent check</option>
+</select>
+</label>
+<label>Stage size<select data-setting="size">
+<option value="small">Small</option>
+<option value="medium">Medium</option>
+<option value="large">Large</option>
+</select>
+</label>
+<label>Browse clothes<select data-setting="browse">
+<option value="rail">Clothes rail</option>
+<option value="grid">Product grid</option>
+</select>
+</label>
+<label>Mannequin shoes<select data-setting="shoes">
+<option value="none">None</option>
+<option value="af1">White AF1</option>
+<option value="garment">Garment footwear</option>
+</select>
+</label>
+</fieldset>
+<fieldset class="panel-settings">
+<legend>Visible panels</legend>
+<label class="check-label">
+<input type="checkbox" data-setting="slots">Outfit slots</label>
+<label class="check-label">
+<input type="checkbox" data-setting="agent">Outfit assistant</label>
+<label class="check-label">
+<input type="checkbox" data-setting="details">Garment details</label>
+<label class="check-label">
+<input type="checkbox" data-setting="saved">Saved looks</label>
+</fieldset>
+<label class="shoe-control">Shoes<select id="mannequin-shoes" aria-label="Mannequin shoes">
+<option value="none">None</option>
+<option value="af1">White AF1</option>
+<option value="garment">Garment footwear</option>
+</select>
+</label>
+</details>
+</div>
+<div class="dialog-actions">
+<button class="outlined" id="reset-settings">Reset settings</button>
+<button class="primary" id="done-settings" data-action="close-settings">Done</button>
+</div>
+</dialog>
+<dialog id="profile-dialog" aria-labelledby="profile-heading">
+<form id="profile-form">
+<div class="dialog-heading">
+<h2 id="profile-heading">New profile</h2>
+<button type="button" class="icon-button" data-close="profile-dialog" aria-label="Close new profile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons/sprite.svg#close"></use></svg></button>
+</div>
+<p class="form-help">Add a person with their own mannequin, wardrobe and saved looks. All files stay on this computer.</p>
+<label>Name<input id="profile-name" required="" maxlength="80" autocomplete="off">
+</label>
+<label>Local mannequin folder<input id="profile-folder" autocomplete="off" aria-describedby="model-files">
+</label>
+<p id="model-files" class="form-help">Folder files: base.png, body.png, over.png, hair_back.png, bg.png and landmarks.json. Cut layers must have transparency.</p>
+<label>Or upload a mannequin folder<input id="profile-upload" type="file" webkitdirectory="" multiple="">
+</label>
+<details>
+<summary>Optional measurements</summary>
+<div class="measurement-fields">
+<label>Bust (cm)<input type="number" id="measure-bust" min="1" max="400" step="0.1">
+</label>
+<label>Waist (cm)<input type="number" id="measure-waist" min="1" max="400" step="0.1">
+</label>
+<label>Hip (cm)<input type="number" id="measure-hip" min="1" max="400" step="0.1">
+</label>
+</div>
+</details>
+<p id="profile-error" role="alert" class="form-error">
+</p>
+<div class="dialog-actions">
+<button type="button" class="outlined" data-close="profile-dialog">Cancel</button>
+<button type="submit" class="primary" id="create-profile">Create profile</button>
+</div>
+</form>
+</dialog>
+<dialog id="import-dialog" aria-labelledby="import-heading">
+<form id="import-form">
+<div class="dialog-heading">
+<h2 id="import-heading">Add garments</h2>
+<button type="button" class="icon-button" data-close="import-dialog" aria-label="Close garment import"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons/sprite.svg#close"></use></svg></button>
+</div>
+<p class="form-help">Import a folder with manifest.json and its layer PNGs. Product images alone become product-only cards until layers are added. Use layers made for this mannequin and canvas.</p>
+<label>Local garment folder<input id="import-folder" autocomplete="off">
+</label>
+<label>Or upload a garment folder<input id="import-upload" type="file" webkitdirectory="" multiple="">
+</label>
+<p class="form-help">For the manifest format, see “Add a person” in the app README.</p>
+<p id="import-error" class="form-error" role="alert">
+</p>
+<div class="dialog-actions">
+<button class="outlined" type="button" data-close="import-dialog">Cancel</button>
+<button class="primary" id="import-submit">Import garments</button>
+</div>
+</form>
+</dialog>
+<dialog id="save-dialog" aria-labelledby="save-heading">
+<form id="save-form">
+<div class="dialog-heading">
+<h2 id="save-heading">Save look</h2>
+<button type="button" id="close-save" class="icon-button" aria-label="Close">
+<span data-icon="close">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#close">
+</use>
+</svg>
+</span>
+</button>
+</div>
+<label for="look-name">Look name</label>
+<input id="look-name" data-action="look-name" name="name" maxlength="60" required="" autocomplete="off">
+<p id="save-error" role="alert" class="form-error">
+</p>
+<div class="dialog-actions">
+<button type="button" id="cancel-save" class="outlined">Cancel</button>
+<button type="submit" class="primary">Save</button>
+</div>
+</form>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite">
+</div>
+<div id="load-error" class="load-error" role="alert" hidden="">
+<h2>Profile could not load</h2>
+<p>Check the profile files, or select another person in the top bar.</p>
+<pre id="error-detail">
+</pre>
+<button class="outlined" id="retry-profile">Retry</button>
+</div>
+<dialog id="agent-dialog" aria-label="Local outfit suggestions">
+<form method="dialog">
+<button class="icon-button" aria-label="Close suggestions">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#close">
+</use>
+</svg>
+</button>
+</form>
+<details class="agent-panel" id="agent-panel" aria-labelledby="agent-heading" open="" hidden="">
+<summary class="agent-heading">
+<h2 id="agent-heading">Outfit assistant</h2>
+<span class="agent-hint">New combinations from your kept pieces</span>
+</summary>
+<form id="agent-form">
+<label for="agent-prompt">Occasion, weather or mood <span class="optional">(optional)</span>
+</label>
+<textarea id="agent-prompt" rows="2" maxlength="2000">
+</textarea>
+<div class="agent-form-bottom">
+<label class="check-label">
+<input type="checkbox" id="use-piece">Use the piece in view</label>
+<button class="primary" id="suggest" type="submit">Suggest an outfit<span data-icon="right">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#right">
+</use>
+</svg>
+</span>
+</button>
+</div>
+</form>
+<p class="agent-status" id="agent-status" role="status" aria-live="polite">New combinations from your kept wardrobe.</p>
+<div id="suggestion" hidden="">
+<p id="suggestion-reason">
+</p>
+<p id="suggestion-pieces">
+</p>
+<div class="suggestion-actions">
+<button id="accept-suggestion" class="primary">Accept &amp; save</button>
+<button id="next-suggestion" class="outlined">Next</button>
+<button id="close-suggestion" class="text-button">Back to my look</button>
+<span id="suggestion-index">
+</span>
+</div>
+</div>
+</details>
+</dialog>
+<section id="looks-gallery" class="looks-gallery" hidden="" aria-label="Looks">
+<div class="gallery-heading">
+<h1>Looks</h1>
+<button id="close-looks" class="icon-button" aria-label="Close looks">
+<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+<use href="../assets/icons/sprite.svg#close">
+</use>
+</svg>
+</button>
+</div>
+<div id="gallery-content">
+<section class="saved-section" id="saved-section" aria-labelledby="saved-heading" hidden="">
+<div class="saved-list" id="saved-list">
+<p class="saved-empty">Save an outfit to come back to it.</p>
+</div>
+</section>
+<section class="curated-section" aria-labelledby="curated-heading" hidden="">
+<div id="curated-list" class="curated-list">
+</div>
+</section>
+</div>
+</section>
+<div hidden="">
+<span id="saved-count">
+</span>
+<span id="nav-saved-count">
+</span>
+<span id="total-count">
+</span>
+<span id="stage-title">
+</span>
+<span id="layer-count">
+</span>
+</div>
 </body>
 </html>

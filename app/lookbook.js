@@ -87,7 +87,7 @@ function render() {
     const sec = document.createElement('section');
     sec.className = 'lb-group';
     const list = visible.map((it, i) => [it, i]).filter(([it]) => it.category === cat);
-    sec.innerHTML = `<h2 class="lb-group-title">${esc(CAT_LABEL[cat] || cat)}<span>${list.length}</span></h2><div class="lb-grid"></div>`;
+    sec.innerHTML = `<h2 class="lb-group-title">${esc(CAT_LABEL[cat] || cat)}</h2><div class="lb-grid"></div>`;
     const grid = sec.querySelector('.lb-grid');
     for (const [it, i] of list) { const c = card(it, i); grid.append(c); io.observe(c); }
     groups.append(sec);
@@ -101,7 +101,7 @@ function $$chips() {
   const counts = {};
   for (const it of items) counts[it.category] = (counts[it.category] || 0) + 1;
   const cats = ['all', ...Object.keys(counts).sort((a, b) => CAT_ORDER.indexOf(a) - CAT_ORDER.indexOf(b))];
-  $('#lb-chips').innerHTML = cats.map(c => `<button role="tab" aria-selected="${c === view.cat}" data-cat="${c}">${esc(c === 'all' ? 'All' : CAT_LABEL[c] || c)}<span>${c === 'all' ? items.length : counts[c]}</span></button>`).join('');
+  $('#lb-chips').innerHTML = cats.map(c => `<button role="tab" data-action="lookbook-category" aria-selected="${c === view.cat}" data-cat="${c}">${esc(c === 'all' ? 'All' : CAT_LABEL[c] || c)}</button>`).join('');
 }
 
 function stats() {
@@ -141,7 +141,7 @@ async function loadProfile(id) {
   data = await r.json();
   applySettings(loadSettings(data.profile.id, data.profile.settingsDefaults || {}));
   document.documentElement.dataset.background = 'neutral';
-  items = data.manifest.items.slice();
+  items = data.manifest.items.filter(i=>i.renderable||i.image);
   try { Object.assign(view, JSON.parse(localStorage.getItem(KEY(id)) || '{}')); } catch {}
   if (!hasView(data.manifest, view.side)) view.side = 'front';
   $('#lb-side-wrap').hidden = $('.lb-d-side').hidden = !hasView(data.manifest, 'back');
@@ -157,11 +157,12 @@ async function init() {
   metadata.innerHTML='<summary>Preview review details</summary>';
   $('#lb-stats').before(metadata);metadata.append($('#lb-stats'));
   const refinements=document.createElement('details');refinements.className='lb-refinements';
-  refinements.innerHTML='<summary>Filters <span aria-hidden="true">⌄</span></summary><div class="lb-extra-tools"></div>';
+  refinements.innerHTML='<summary aria-label="Lookbook filters"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons/sprite.svg#filter"></use></svg></summary><div class="lb-extra-tools"></div>';
   const controls=[...document.querySelectorAll('.lb-tools>.lb-select,.lb-tools>.lb-size')];
   $('.lb-tools').append(refinements);controls.forEach(c=>refinements.querySelector('.lb-extra-tools').append(c));
+  refinements.querySelector('.lb-extra-tools').append($('.profile-control'));
   $('#lb-q').placeholder='Search pieces or colours';
-  const arrange=()=>{metadata.open=false;refinements.open=innerWidth>700;$('#lb-main').append(metadata);};
+  const arrange=()=>{metadata.open=false;refinements.open=false;$('#lb-main').append(metadata);};
   arrange();window.addEventListener('resize',arrange);
   const pr = await (await fetch('api/profiles')).json();
   const sel = $('#lb-profile');

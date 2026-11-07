@@ -8,21 +8,21 @@ This site shows one wardrobe (52 garments, 48 can be worn now). It has no photos
 
 ## What you can do on the site
 
-| Web | Phone | Browse on the phone |
-|---|---|---|
-| ![Studio on the web](docs/img/site_front.png) | ![Studio on a phone](docs/img/site_mobile.png) | ![Browse the wardrobe](docs/img/site_mobile_browse.png) |
+| Web | Phone | Phone, choosing | Phone, dark |
+|---|---|---|---|
+| ![Studio on the web](docs/img/site_front.png) | ![Studio on a phone](docs/img/site_mobile.png) | ![Category sheet](docs/img/site_mobile_browse.png) | ![Dark theme](docs/img/site_mobile_dark.png) |
 
-- Choose a top, a mid layer (jumper), an outer layer (jacket), a bottom and shoes.
-- **Browse wardrobe** shows all items as pictures. You can search by name, colour or tag. You can filter by category (with counts), colour family and status, and you can sort. Tap a picture to wear it. On a phone, the list fills the screen; on the web, it opens as a panel.
-- Switch between **Front** and **Back**.
-- In **Fit & Layer**, you can:
-  - tuck or untuck a shirt, and open or close a jacket;
-  - choose **Smooth** or **Natural** trousers (pressed, or with natural folds);
-  - choose the shoes: white low-top trainers, black Chelsea boots or brown lace-up boots. The trouser hem changes to sit on the shoe you choose;
-  - change the hair style and the **Face** shape;
-  - turn **Shadows** on or off. The shadows are soft contact shadows under collars, hems, sleeves and shirt tails, and a floor shadow under the feet. The browser computes them from the layers.
-- Press **Random outfit** for a new combination. The shuffle follows simple style rules: there is always a top and a bottom, and they contrast in lightness. A shirt is tucked only when no jumper is on. A jacket opens in most looks.
-- **Curated looks** and the **Lookbook** show suggested and saved outfits.
+- **Choose.** Tap a category (Tops, Mid, Outer, Bottoms, Shoes). Tap an item to wear it; tap it again to remove it. The sheet stays open, so you can try several items in a row and still see the mannequin. Swipe the stage or use the arrows to step through the category.
+- **Search** finds any item by name, colour or tag, in every category.
+- **Item options** sit with the item: tuck or untuck a top, open or close a jacket, **Smooth** or natural trousers. On the web they are in the **Layers** column; on a phone, tap the layers button on the stage.
+- **Front / Back** switches the view.
+- **Random** makes a new combination. The shuffle follows simple style rules: there is always a top and a bottom, and they contrast in lightness. A shirt is tucked only when no jumper is on. A jacket opens in most looks.
+- **Save** keeps the look in your browser with one tap. **Looks** shows saved and suggested looks in one grid; tap one to open it. **Compare** shows two looks side by side.
+- **Settings** has hair, **Face** shape, **Shadows** and the light or dark theme. The shadows are soft contact shadows under collars, hems, sleeves and shirt tails, and a floor shadow under the feet. The browser computes them from the layers.
+- The **Lookbook** page shows all looks as a printable sheet.
+- Keyboard on the web: arrow keys step items, F and B switch the view, / opens search, Z and Shift+Z undo and redo.
+- Type: [Onest](https://fonts.google.com/specimen/Onest) (SIL Open Font License), self-hosted.
+- Agents and tests can drive the site with `window.wardrobeTest` and the `data-action` attributes. See `app/AGENT_API.md`.
 
 Garments marked *held* or *open faults* are shown but are not finished.
 

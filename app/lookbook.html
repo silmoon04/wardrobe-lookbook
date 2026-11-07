@@ -9,15 +9,15 @@
   <link rel="stylesheet" href="styles/tokens.css">
   <link rel="stylesheet" href="styles/components.css">
   <link rel="stylesheet" href="styles/lookbook.css">
-  <link rel="stylesheet" href="styles/studio.css">
+  <link rel="stylesheet" href="styles/workspace.css">
   <script type="module" src="lookbook.js"></script>
 <script>window.wardrobeStatic=true</script><style>#new-profile,#add-garments,#agent-panel,.profile-control,#empty-import,#profile-switch{display:none!important}</style></head>
 <body>
   <a class="skip-link" href="#lb-main">Skip to garments</a>
   <div class="shell">
     <header class="topbar">
-      <a class="wordmark" href="./">Wardrobe<small>VIRTUAL TRY-ON</small></a>
-      <nav aria-label="Main"><a href="./">Try on</a><a href="./?browse=1">My wardrobe</a><a href="lookbook.html" class="active" aria-current="page">Looks</a></nav>
+      <a class="icon-button" href="./" aria-label="Wardrobe"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons/sprite.svg#hanger"></use></svg></a>
+      <h1 class="lookbook-title">Lookbook</h1>
       <div class="header-actions"><label class="profile-control"><span class="sr-only">Person</span><select id="lb-profile" aria-label="Person"></select></label></div>
     </header>
 
@@ -51,7 +51,7 @@
   </div>
 
   <dialog id="lb-detail" class="lb-detail" aria-labelledby="lb-d-title">
-    <form method="dialog" class="lb-d-close"><button class="icon-button" aria-label="Close">✕</button></form>
+    <form method="dialog" class="lb-d-close"><button class="icon-button" aria-label="Close"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons/sprite.svg#close"></use></svg></button></form>
     <div class="lb-d-body">
       <div class="lb-d-stage"><div class="stage" id="lb-d-stage"></div></div>
       <div class="lb-d-info">

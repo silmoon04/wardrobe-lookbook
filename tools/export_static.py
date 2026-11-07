@@ -12,7 +12,7 @@ from PIL import Image
 
 APP = Path(__file__).resolve().parents[1]
 ASSETS = APP.parent/'assets'
-CODE = ['index.html', 'lookbook.html', 'app.js', 'lookbook.js', 'compositor.js', 'settings.js', 'shuffle.js'] + (['shadows.js'] if (APP/'shadows.js').exists() else [])
+CODE = ['index.html', 'lookbook.html', 'app.js', 'studio-shell.js', 'appearance-chips.js', 'product-images.js', 'local-agent.js', 'lookbook.js', 'compositor.js', 'settings.js', 'shuffle.js'] + (['shadows.js'] if (APP/'shadows.js').exists() else [])
 HIDE = '<script>window.wardrobeStatic=true</script><style>#new-profile,#add-garments,#agent-panel,.profile-control,#empty-import,#profile-switch{display:none!important}</style>'
 DROP_KEYS = {'source', 'sourceLabel', 'versionSource', 'provenance', 'colourSource', 'review_state'}
 
